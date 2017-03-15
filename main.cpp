@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <errno.h>
 
-NuSDBlockDevice bd;
+NuSDBlockDevice bd(MBED_CONF_APP_SD_DAT0, MBED_CONF_APP_SD_DAT1, MBED_CONF_APP_SD_DAT2, MBED_CONF_APP_SD_DAT3,  // SD DAT0-3
+    MBED_CONF_APP_SD_CMD, MBED_CONF_APP_SD_CLK, MBED_CONF_APP_SD_CD);                                           // SD CMD/CLK/CD
 FATFileSystem fs("fs");
 
 void return_error(int ret_val){
