@@ -24,10 +24,13 @@ void errno_error(void* ret_val){
 
 int main() {
   int error = 0;
-  printf("Welcome to the filesystem example.\r\n"
-         "Formatting a FAT, SD-backed filesystem. ");
+  printf("Welcome to the filesystem example.\r\n");
+
+#ifdef NU_TEST_FORMAT_SD   
+  printf("Formatting a FAT, SD-backed filesystem. ");
   error = FATFileSystem::format(&bd);
   return_error(error);
+#endif
 
   printf("Mounting the filesystem on \"/fs\". ");
   error = fs.mount(&bd);
