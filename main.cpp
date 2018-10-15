@@ -1,11 +1,9 @@
 #include "mbed.h"
 #include "FATFileSystem.h"
-#include "NuSDBlockDevice.h"
 #include <stdio.h>
 #include <errno.h>
 
-NuSDBlockDevice bd(MBED_CONF_APP_SD_DAT0, MBED_CONF_APP_SD_DAT1, MBED_CONF_APP_SD_DAT2, MBED_CONF_APP_SD_DAT3,  // SD DAT0-3
-    MBED_CONF_APP_SD_CMD, MBED_CONF_APP_SD_CLK, MBED_CONF_APP_SD_CD);                                           // SD CMD/CLK/CD
+BlockDevice *bd = BlockDevice::get_default_instance();
 FATFileSystem fs("fs");
 
 void return_error(int ret_val){
@@ -28,12 +26,12 @@ int main() {
 
 #ifdef NU_TEST_FORMAT_SD   
   printf("Formatting a FAT, SD-backed filesystem. ");
-  error = FATFileSystem::format(&bd);
+  error = FATFileSystem::format(bd);
   return_error(error);
 #endif
 
   printf("Mounting the filesystem on \"/fs\". ");
-  error = fs.mount(&bd);
+  error = fs.mount(bd);
   return_error(error);
 
   printf("Opening a new file, numbers.txt.");
