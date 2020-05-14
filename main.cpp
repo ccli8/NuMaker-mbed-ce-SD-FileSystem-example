@@ -31,13 +31,13 @@ NuSDBlockDevice *bd = new NuSDBlockDevice();
 // BlockDevice *bd = new HeapBlockDevice(2048, 1, 1, 512);
 
 
-// This example uses LittleFileSystem as the default file system
-#include "LittleFileSystem.h"
-LittleFileSystem fs("fs");
+// This example uses FAT file system as the default.
+#include "FATFileSystem.h"
+FATFileSystem fs("fs");
 
-// Uncomment the following two lines and comment the previous two to use FAT file system.
-// #include "FATFileSystem.h"
-// FATFileSystem fs("fs");
+// Uncomment in the following two lines and comment out the previous two to use Little file system.
+//#include "LittleFileSystem.h"
+//LittleFileSystem fs("fs");
 
 
 // Set up the button to trigger an erase
