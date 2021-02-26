@@ -19,6 +19,7 @@
 
 #include "NuSDBlockDevice.h"
 
+
 // Maximum number of elements in buffer
 #define BUFFER_MAX_LEN 10
 
@@ -42,6 +43,7 @@ FATFileSystem fs("fs");
 
 // Set up the button to trigger an erase
 InterruptIn irq(BUTTON1);
+
 void erase() {
     printf("Initializing the block device... ");
     fflush(stdout);
@@ -68,14 +70,24 @@ void erase() {
     }
 }
 
+#if MBED_MAJOR_VERSION >= 6
+static auto erase_event = mbed_event_queue()->make_user_allocated_event(erase);
+#endif
 
 // Entry point for the example
 int main() {
+#ifdef MBED_MAJOR_VERSION
+    printf("Mbed OS version %d.%d.%d\r\n\n", MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
+#endif
     printf("--- Mbed OS filesystem example ---\n");
 
     // Setup the erase event on button press, use the event queue
     // to avoid running in interrupt context
+#if MBED_MAJOR_VERSION >= 6
+    irq.fall(std::ref(erase_event));
+#else
     irq.fall(mbed_event_queue()->event(erase));
+#endif
 
     // Try to mount the filesystem
     printf("Mounting the filesystem... ");
@@ -157,8 +169,8 @@ int main() {
         fseek(f, pos, SEEK_SET);
     
         // Store number
-        fprintf(f, "    %d\n", number);
-
+        fprintf(f, "    %d\n", (int)number);
+	
         // Flush between write and read on same file
         fflush(f);
     }
