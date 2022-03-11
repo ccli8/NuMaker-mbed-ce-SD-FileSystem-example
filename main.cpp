@@ -18,13 +18,16 @@
 #include <errno.h>
 
 #include "NuSDBlockDevice.h"
+#include "FlashSimBlockDevice.h"
 
 
 // Maximum number of elements in buffer
 #define BUFFER_MAX_LEN 10
 
 // NUSD for block device
-NuSDBlockDevice *bd = new NuSDBlockDevice();
+NuSDBlockDevice *bd_ = new NuSDBlockDevice();
+// Add flash-simulate layer on top of NUSD not implementing "erase" characteristic
+FlashSimBlockDevice *bd = new FlashSimBlockDevice(bd_);
 
 // Instead of the default block device, you can define your own block device.
 // For example: HeapBlockDevice with size of 2048 bytes, read size 1, write size 1 and erase size 512.
@@ -55,7 +58,10 @@ void erase() {
 
     printf("Erasing the block device... ");
     fflush(stdout);
-    err = bd->erase(0, bd->size());
+    // Whole erase takes too long for SD/NUSD. Just erase the front so that
+    // it will recognize as invalid file system format.
+    //err = bd->erase(0, bd->size());
+    err = bd->erase(0, 1024*64);
     printf("%s\n", (err ? "Fail :(" : "OK"));
     if (err) {
         error("error: %s (%d)\n", strerror(-err), err);
